@@ -1,1 +1,28 @@
-# docker-android-studio
+# Android Studio 4.1.1 preinstalled in Docker image with GUI support
+
+See [here](https://github.com/Purik/android-studio-docker) for the original repo
+
+[![N|Solid](https://www.docker.com/sites/default/files/vertical_large.png)](https://hub.docker.com/r/zoro1666/android-studio/)
+
+My personal image that I use for my CI server for android projects.
+Typical usage:
+  - Build image by  ```docker build ... ``` command or get ready image ```docker pull zoro1666/android-studio:latest``` from my public repo (https://hub.docker.com/r/zoro1666/android-studio/)
+  - Customize container with studio for any specific project by installing necessary build tools, accepting licenses agreements, etc  throug GUI by X11 that preinstalled in base image
+  - Use customized container as image for your personal configurations by ```docker commit```
+
+### Probability work process (I use this one)
+I have CI server with installed docker engine for running containers for separate builders with diffirent configurations. It is comfortable for me localize dependencies inside container, resolving much problems as libraries dependencies, current software configurations for specific build runners, moreover, docker based approach allow me follow modern concept "Infrastructure as application", so different infrastructure configurations have becamed separate projects inside my code.
+
+You have to run Android Studio as GUI application when it is necessity to install new build tools, new SDK version, etc. I have spent much time for proxying X11 protocol stream from docker container through host machine to my local XWindow server, running on my home laptop.
+
+### My environment: Windows OS + XMing as X11 server application.
+- Establish ssh connection to my CI server with x11 forwarding. I typically use Putty with option Connection/SSH/X11/"Enable X11 forwarding" checkbox checked on.
+- Run container by calling ```run.sh <your-image-name>``` (you can find this script beside Dockerfile in repo)
+- Enjoy
+
+### Persist data and volumes
+If you wish prepare Docker image once and reuse it multiple times later, follow next steps:
+ - Run container by calling ```run.sh <your-image-name>``` (you can find this script beside Dockerfile in repo)
+ - From Android Studio GUI click on Configuration menu item and install the necessary SDK tools and plugins
+ - Close Studio GUI
+ - You will see script is done and docker have build ```your-image-name``` that contains all configured Tools, Pluging, etc
